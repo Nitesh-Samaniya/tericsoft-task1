@@ -9,6 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import AddEntry from './AddEntry';
+import axios from 'axios';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,42 +35,55 @@ function createData(name, calories, fat, carbs, protein) {
   return { name, calories, fat, carbs, protein };
 }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
+// const rows = [
+//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+//   createData('Eclair', 262, 16.0, 24, 6.0),
+//   createData('Cupcake', 305, 3.7, 67, 4.3),
+//   createData('Gingerbread', 356, 16.0, 49, 3.9),
+// ];
 
 export default function Home() {
+  const [empList, setEmpList] = React.useState([]);
+
+  async function getData(){
+    await axios.get("https://tericsoft-fake-backend.onrender.com/employee")
+      .then((res)=>setEmpList(res.data))
+      .catch((e)=>{
+        console.log(e);
+      })
+  }
+  React.useEffect(()=>{
+    getData()
+  },[])
+
   return (
     <TableContainer component={Paper}>
-      <AddEntry />
+      <AddEntry getData={getData}/>
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
             <StyledTableCell>Name</StyledTableCell>
-            <StyledTableCell align="right">Email</StyledTableCell>
-            <StyledTableCell align="right">Phone</StyledTableCell>
-            <StyledTableCell align="right">DOB</StyledTableCell>
-            <StyledTableCell align="right">Gender</StyledTableCell>
-            <StyledTableCell align="right">Hobbies</StyledTableCell>
-            <StyledTableCell align="right">Edit</StyledTableCell>
-            <StyledTableCell align="right">Delete</StyledTableCell>
+            <StyledTableCell>Email</StyledTableCell>
+            <StyledTableCell>Phone</StyledTableCell>
+            <StyledTableCell>DOB</StyledTableCell>
+            <StyledTableCell>Gender</StyledTableCell>
+            <StyledTableCell>Hobbies</StyledTableCell>
+            <StyledTableCell>Edit</StyledTableCell>
+            <StyledTableCell>Delete</StyledTableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {empList.map((row) => (
             <StyledTableRow key={row.name}>
               <StyledTableCell component="th" scope="row">
                 {row.name}
               </StyledTableCell>
-              <StyledTableCell align="right">{row.calories}</StyledTableCell>
-              <StyledTableCell align="right">{row.fat}</StyledTableCell>
-              <StyledTableCell align="right">{row.carbs}</StyledTableCell>
-              <StyledTableCell align="right">{row.protein}</StyledTableCell>
-              <StyledTableCell align="right">{row.protein}</StyledTableCell>
+              <StyledTableCell>{row.email}</StyledTableCell>
+              <StyledTableCell>{row.phone}</StyledTableCell>
+              <StyledTableCell>{row.dob}</StyledTableCell>
+              <StyledTableCell>{row.gender}</StyledTableCell>
+              <StyledTableCell>{row.hobbies.map((el)=><p>{el}</p>)}</StyledTableCell>
 
             </StyledTableRow>
           ))}

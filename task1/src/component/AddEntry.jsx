@@ -34,7 +34,7 @@ const initData = {
   hobbies: []
 }
 
-export default function AddEntry() {
+export default function AddEntry({getData}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -77,7 +77,8 @@ export default function AddEntry() {
       data: form
     })
       .then((res) => {
-        console.log(res.data);
+        getData();
+        // console.log(res.data);
       })
       .catch((e) => {
         console.log(e);
@@ -97,6 +98,13 @@ export default function AddEntry() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
+        <Typography sx={{
+          fontFamily:'cursive',
+          color: 'red',
+          fontSize:'25px',
+          textAlign:'center'
+        }}>Add New Employee</Typography>
+
           <Box sx={{display:'flex'}}>
             <FormLabel sx={{mt:'10px'}}>Name</FormLabel>
             <Input
@@ -143,7 +151,7 @@ export default function AddEntry() {
             />
           </Box>
 
-          <RadioGroup onChange={handleChange} defaultValue="female" name="gender" sx={{ my: 1 }}>
+          <RadioGroup onChange={handleChange} name="gender" sx={{ my: 1 }}>
           <Typography level="h3">Gender</Typography>
             <Box sx={{display: 'block'}}>
               <Radio
