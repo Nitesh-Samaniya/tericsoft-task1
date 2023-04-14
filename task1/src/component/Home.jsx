@@ -7,10 +7,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Button } from '@mui/material';
 import AddEntry from './AddEntry';
 import axios from 'axios';
 import { AiFillDelete } from 'react-icons/ai';
+import EditEmpDetail from './EditEmpDetail';
+import { FaEdit } from 'react-icons/fa';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -34,6 +35,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function Home() {
   const [empList, setEmpList] = React.useState([]);
+  const [selectedRow, setSelectedRow] = React.useState(null);
 
   async function getData(){
     await axios.get("https://tericsoft-fake-backend.onrender.com/employee")
@@ -49,6 +51,10 @@ export default function Home() {
       .catch((e)=>console.log(e))
   }
 
+  const handleEditClick = (row) => {
+    setSelectedRow(row);
+  }
+
   React.useEffect(()=>{
     getData()
   },[])
@@ -56,6 +62,7 @@ export default function Home() {
   return (
     <TableContainer component={Paper}>
       <AddEntry getData={getData}/>
+      {selectedRow && <EditEmpDetail getData={getData} row={selectedRow} onClose={() => setSelectedRow(null)} />}
       <Table sx={{ minWidth: 700 }} aria-label="customized table">
         <TableHead>
           <TableRow>
@@ -71,7 +78,7 @@ export default function Home() {
         </TableHead>
         <TableBody>
           {empList.map((row) => (
-            <StyledTableRow key={row.name}>
+            <StyledTableRow key={row.id}>
               <StyledTableCell component="th" scope="row">
                 {row.name}
               </StyledTableCell>
@@ -80,7 +87,7 @@ export default function Home() {
               <StyledTableCell>{row.dob}</StyledTableCell>
               <StyledTableCell>{row.gender}</StyledTableCell>
               <StyledTableCell>{row.hobbies.map((el)=><p>{el}</p>)}</StyledTableCell>
-              <StyledTableCell>Edit</StyledTableCell>
+              <StyledTableCell sx={{cursor:"pointer"}} onClick={() => handleEditClick(row)}>{<FaEdit size={25}/>}</StyledTableCell>
               <StyledTableCell sx={{cursor:"pointer"}}>{<AiFillDelete onClick={()=>handleDelete(row.id)} size={25}/>}</StyledTableCell>
             </StyledTableRow>
           ))}
