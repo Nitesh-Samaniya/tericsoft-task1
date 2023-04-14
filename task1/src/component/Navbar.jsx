@@ -7,13 +7,13 @@ const Navbar = () => {
         width: "100%",
         backgroundColor: "skyblue",
         padding: "15px",
-        display: "flex",
-        justifyContent: 'space-evenly',
         fontFamily: "cursive",
-        fontSize: "24px"
+        fontSize: "24px",
+        cursor: "pointer",
+        color:'red',
+        marginBottom: "50px"
     }}>
-        <Box sx={{cursor: "pointer"}}>Tericsoft</Box>
-        <Box sx={{cursor: "pointer"}}>Employee's Sheet</Box>
+        Tericsoft Employee's Sheet
     </Box>
   )
 }
