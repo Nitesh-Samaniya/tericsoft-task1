@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Checkbox, FormLabel, Input, Radio, RadioGroup } from '@mui/material';
+import { Alert, AlertTitle, Checkbox, FormLabel, Input, Radio, RadioGroup } from '@mui/material';
 import axios from 'axios';
 
 const style = {
@@ -78,7 +78,11 @@ export default function AddEntry({getData}) {
     })
       .then((res) => {
         getData();
-        // console.log(res.data);
+        <Alert severity="success">
+        <AlertTitle>Success</AlertTitle>
+        <strong>New Employee Added Successfully</strong>
+      </Alert>
+
       })
       .catch((e) => {
         console.log(e);

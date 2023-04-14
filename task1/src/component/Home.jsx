@@ -10,6 +10,7 @@ import Paper from '@mui/material/Paper';
 import { Button } from '@mui/material';
 import AddEntry from './AddEntry';
 import axios from 'axios';
+import { AiFillDelete } from 'react-icons/ai';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -31,18 +32,6 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-function createData(name, calories, fat, carbs, protein) {
-  return { name, calories, fat, carbs, protein };
-}
-
-// const rows = [
-//   createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-//   createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-//   createData('Eclair', 262, 16.0, 24, 6.0),
-//   createData('Cupcake', 305, 3.7, 67, 4.3),
-//   createData('Gingerbread', 356, 16.0, 49, 3.9),
-// ];
-
 export default function Home() {
   const [empList, setEmpList] = React.useState([]);
 
@@ -53,6 +42,13 @@ export default function Home() {
         console.log(e);
       })
   }
+
+  const handleDelete = async(id)=>{
+    await axios.delete(`https://tericsoft-fake-backend.onrender.com/employee/${id}`)
+      .then((res)=>getData())
+      .catch((e)=>console.log(e))
+  }
+
   React.useEffect(()=>{
     getData()
   },[])
@@ -84,7 +80,8 @@ export default function Home() {
               <StyledTableCell>{row.dob}</StyledTableCell>
               <StyledTableCell>{row.gender}</StyledTableCell>
               <StyledTableCell>{row.hobbies.map((el)=><p>{el}</p>)}</StyledTableCell>
-
+              <StyledTableCell>Edit</StyledTableCell>
+              <StyledTableCell sx={{cursor:"pointer"}}>{<AiFillDelete onClick={()=>handleDelete(row.id)} size={25}/>}</StyledTableCell>
             </StyledTableRow>
           ))}
         </TableBody>
