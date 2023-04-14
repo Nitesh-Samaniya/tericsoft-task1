@@ -34,7 +34,7 @@ const initData = {
   hobbies: []
 }
 
-export default function AddEntry({getData}) {
+export default function AddEntry({setIsLoading, getData}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -66,7 +66,7 @@ export default function AddEntry({getData}) {
 
   const handleSubmit = async(e)=>{
     e.preventDefault();
-
+    setIsLoading(false)
     await axios({
       url: "https://tericsoft-fake-backend.onrender.com/employee",
       method: "POST",
@@ -78,11 +78,7 @@ export default function AddEntry({getData}) {
     })
       .then((res) => {
         getData();
-        <Alert severity="success">
-        <AlertTitle>Success</AlertTitle>
-        <strong>New Employee Added Successfully</strong>
-      </Alert>
-
+        setIsLoading(true)
       })
       .catch((e) => {
         console.log(e);

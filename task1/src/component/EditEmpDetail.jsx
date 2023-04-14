@@ -27,7 +27,7 @@ const inputStyle = {
 }
 
 
-export default function EditEmpDetail({getData, row, onClose}) {
+export default function EditEmpDetail({setIsLoading, getData, row, onClose}) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -59,7 +59,7 @@ export default function EditEmpDetail({getData, row, onClose}) {
 
   const handleSubmit = async(e)=>{
     e.preventDefault();
-
+    setIsLoading(false)
     await axios({
       url: `https://tericsoft-fake-backend.onrender.com/employee/${row.id}`,
       method: "PATCH",
@@ -71,11 +71,7 @@ export default function EditEmpDetail({getData, row, onClose}) {
     })
       .then((res) => {
         getData();
-        <Alert severity="success">
-        <AlertTitle>Success</AlertTitle>
-        <strong>Details Updated Successfully</strong>
-      </Alert>
-
+        setIsLoading(true);
       })
       .catch((e) => {
         console.log(e);

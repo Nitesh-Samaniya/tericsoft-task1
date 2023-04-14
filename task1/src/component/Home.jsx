@@ -12,6 +12,7 @@ import axios from 'axios';
 import { AiFillDelete } from 'react-icons/ai';
 import EditEmpDetail from './EditEmpDetail';
 import { FaEdit } from 'react-icons/fa';
+import loadingImg from "./images/loading.gif"
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -36,18 +37,27 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 export default function Home() {
   const [empList, setEmpList] = React.useState([]);
   const [selectedRow, setSelectedRow] = React.useState(null);
+  const [isLoading, setIsLoading] = React.useState(false)
 
   async function getData(){
+    setIsLoading(true)
     await axios.get("https://tericsoft-fake-backend.onrender.com/employee")
-      .then((res)=>setEmpList(res.data))
+      .then((res)=>{
+        setEmpList(res.data)
+        setIsLoading(false)
+      })
       .catch((e)=>{
         console.log(e);
       })
   }
 
   const handleDelete = async(id)=>{
+    setIsLoading(true)
     await axios.delete(`https://tericsoft-fake-backend.onrender.com/employee/${id}`)
-      .then((res)=>getData())
+      .then((res)=>{
+        getData()
+        setIsLoading(false)
+      })
       .catch((e)=>console.log(e))
   }
 
@@ -59,40 +69,46 @@ export default function Home() {
     getData()
   },[])
 
-  return (
-    <TableContainer component={Paper}>
-      <AddEntry getData={getData}/>
-      {selectedRow && <EditEmpDetail getData={getData} row={selectedRow} onClose={() => setSelectedRow(null)} />}
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Name</StyledTableCell>
-            <StyledTableCell>Email</StyledTableCell>
-            <StyledTableCell>Phone</StyledTableCell>
-            <StyledTableCell>DOB</StyledTableCell>
-            <StyledTableCell>Gender</StyledTableCell>
-            <StyledTableCell>Hobbies</StyledTableCell>
-            <StyledTableCell>Edit</StyledTableCell>
-            <StyledTableCell>Delete</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {empList.map((row) => (
-            <StyledTableRow key={row.id}>
-              <StyledTableCell component="th" scope="row">
-                {row.name}
-              </StyledTableCell>
-              <StyledTableCell>{row.email}</StyledTableCell>
-              <StyledTableCell>{row.phone}</StyledTableCell>
-              <StyledTableCell>{row.dob}</StyledTableCell>
-              <StyledTableCell>{row.gender}</StyledTableCell>
-              <StyledTableCell>{row.hobbies.map((el)=><p>{el}</p>)}</StyledTableCell>
-              <StyledTableCell sx={{cursor:"pointer"}} onClick={() => handleEditClick(row)}>{<FaEdit size={25}/>}</StyledTableCell>
-              <StyledTableCell sx={{cursor:"pointer"}}>{<AiFillDelete onClick={()=>handleDelete(row.id)} size={25}/>}</StyledTableCell>
-            </StyledTableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
+  if(isLoading){
+    return <img src={loadingImg} alt="loadingImg"/>
+  }else{
+    
+    return (
+      <TableContainer component={Paper}>
+        <AddEntry setIsLoading={setIsLoading} getData={getData}/>
+        {selectedRow && <EditEmpDetail setIsLoading={setIsLoading} getData={getData} row={selectedRow} onClose={() => setSelectedRow(null)} />}
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>Name</StyledTableCell>
+              <StyledTableCell>Email</StyledTableCell>
+              <StyledTableCell>Phone</StyledTableCell>
+              <StyledTableCell>DOB</StyledTableCell>
+              <StyledTableCell>Gender</StyledTableCell>
+              <StyledTableCell>Hobbies</StyledTableCell>
+              <StyledTableCell>Edit</StyledTableCell>
+              <StyledTableCell>Delete</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {empList.map((row) => (
+              <StyledTableRow key={row.id}>
+                <StyledTableCell component="th" scope="row">
+                  {row.name}
+                </StyledTableCell>
+                <StyledTableCell>{row.email}</StyledTableCell>
+                <StyledTableCell>{row.phone}</StyledTableCell>
+                <StyledTableCell>{row.dob}</StyledTableCell>
+                <StyledTableCell>{row.gender}</StyledTableCell>
+                <StyledTableCell>{row.hobbies.map((el)=><p>{el}</p>)}</StyledTableCell>
+                <StyledTableCell sx={{cursor:"pointer"}} onClick={() => handleEditClick(row)}>{<FaEdit size={25}/>}</StyledTableCell>
+                <StyledTableCell sx={{cursor:"pointer"}}>{<AiFillDelete onClick={()=>handleDelete(row.id)} size={25}/>}</StyledTableCell>
+              </StyledTableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  }
+
 }
