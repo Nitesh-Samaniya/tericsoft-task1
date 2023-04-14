@@ -3,10 +3,11 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import { Alert, AlertTitle, Checkbox, FormLabel, Input, Radio, RadioGroup } from '@mui/material';
+import { Checkbox, FormLabel, Input, Radio, RadioGroup } from '@mui/material';
 import axios from 'axios';
 import { FaEdit } from 'react-icons/fa';
 
+// give style to the Modal Box
 const style = {
   position: 'absolute',
   top: '50%',
@@ -19,6 +20,7 @@ const style = {
   p: 4,
 };
 
+// give style to the input fields used in Modal Box
 const inputStyle = {
   display: "block",
   width: "54%",
@@ -33,16 +35,18 @@ export default function EditEmpDetail({setIsLoading, getData, row, onClose}) {
   const handleClose = () => setOpen(false);
   const [form, setForm] = React.useState(row)
   const [checkboxes, setCheckboxes] = React.useState([]);
-    console.log(row)
+  
+  //function to handle the change in the name, email, phone, date and gender radio input fields.
   const handleChange = (e)=>{
-    const {name, value} = e.target;
+    const {name, value} = e.target; //getting the name and value from the event
     
-    setForm({
+    setForm({ //updating the form value
       ...form,
       [name]: value
     });
   }
 
+  //function to handle the change in the checkbox
   function handleCheckboxChange(event) {
     const { value } = event.target;
     let updatedCheckboxes = [...checkboxes];
@@ -57,10 +61,14 @@ export default function EditEmpDetail({setIsLoading, getData, row, onClose}) {
     form.hobbies = updatedCheckboxes;
   }
 
+  //function to handle the update button and responsible to PATCH the selected row
   const handleSubmit = async(e)=>{
     e.preventDefault();
+    // Sets isLoading to true before deleting the record
     setIsLoading(false)
+
     await axios({
+      // Sends a PATCH request to the specified endpoint using axios
       url: `https://tericsoft-fake-backend.onrender.com/employee/${row.id}`,
       method: "PATCH",
       headers: {
@@ -70,23 +78,29 @@ export default function EditEmpDetail({setIsLoading, getData, row, onClose}) {
       data: form
     })
       .then((res) => {
+        // Calls getData() to refresh the employee list after the record has been deleted
         getData();
+        // Sets isLoading to false after the record has been deleted
         setIsLoading(true);
       })
       .catch((e) => {
+        // alert any errors that occur during the GET request
+        alert("something went wrong, try after 30 secs")
         console.log(e);
       });
       
-    onClose();
-    setCheckboxes([]);
+    onClose(); //make the setSelected null again to remove edit icon from home screen
+    setCheckboxes([]); 
   }
 
+  //function to make the setSelected null again to remove edit icon from home screen
   const handleCancel = () => {
     onClose();
   }
 
   return (
     <div>
+      {/* import react icon from react-icon */}
       <Button onClick={handleOpen} variant="outlined" sx={{marginBottom: "10px"}}><FaEdit size={20}/></Button>
       <Modal
         open={open}
@@ -102,6 +116,7 @@ export default function EditEmpDetail({setIsLoading, getData, row, onClose}) {
           textAlign:'center'
         }}>Edit Employee Details</Typography>
 
+          {/* Name field */}
           <Box sx={{display:'flex'}}>
             <FormLabel sx={{mt:'10px'}}>Name</FormLabel>
             <Input
@@ -113,6 +128,7 @@ export default function EditEmpDetail({setIsLoading, getData, row, onClose}) {
             />
           </Box>
 
+          {/* Email field */}
           <Box sx={{display:'flex'}}>
             <FormLabel sx={{mt:'10px'}}>Email</FormLabel> 
 
@@ -125,6 +141,7 @@ export default function EditEmpDetail({setIsLoading, getData, row, onClose}) {
             />
           </Box>
 
+          {/* Phone No. field */}
           <Box sx={{display:'flex'}}>
             <FormLabel sx={{mt:'10px'}}>Phone No.</FormLabel>
             <Input
@@ -137,6 +154,7 @@ export default function EditEmpDetail({setIsLoading, getData, row, onClose}) {
             />
           </Box>
 
+          {/* Date of birth picker field */}
           <Box sx={{display:'flex'}}>
             <FormLabel sx={{mt:'10px'}}>DOB</FormLabel>
             <Input
@@ -148,6 +166,7 @@ export default function EditEmpDetail({setIsLoading, getData, row, onClose}) {
             />
           </Box>
 
+          {/* Radio field to select the gender */}
           <RadioGroup onChange={handleChange} name="gender" sx={{ my: 1 }}>
           <Typography level="h3">Gender</Typography>
             <Box sx={{display: 'block'}}>
@@ -169,6 +188,7 @@ export default function EditEmpDetail({setIsLoading, getData, row, onClose}) {
             </Box>
           </RadioGroup>
 
+          {/* Checkbox fields to select hobbies */}
           <Box sx={{ display: 'flex', gap: 3 }}>
           <Typography sx={{mt:'10px'}}>Hobbies</Typography>
             <Box>
@@ -183,7 +203,10 @@ export default function EditEmpDetail({setIsLoading, getData, row, onClose}) {
 
           </Box>
 
+          {/* Button to PATCH row and update in backend */}
           <Button sx={inputStyle} onClick={handleSubmit}>Update</Button>
+
+          {/* Button to make the setSelected null again to remove edit icon from home screen */}
           <Button sx={inputStyle} onClick={handleCancel}>Cancle</Button>
           
         </Box>
